@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Details Form</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    .box {
+        width: 350px;
+        margin: auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px gray;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #888;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .edit, .delete {
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px 8px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .edit { background: green; }
+    .delete { background: red; }
+</style>
+</head>
+<body>
+
+<h2>Details Form</h2>
+
+<div class="box">
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="number" id="phone" placeholder="Enter Phone Number">
+
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+    </select>
+
+    <button onclick="submitData()">Submit</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="recordTable"></tbody>
+</table>
+
+<script>
+    let records = JSON.parse(localStorage.getItem("recordsData")) || [];
+    let editIndex = null;
+
+    function submitData() {
+        let name = document.getElementById("name").value;
+        let email = document.getElementById("email").value;
+        let phone = document.getElementById("phone").value;
+        let gender = document.getElementById("gender").value;
+       
+
+        if (!name || !email || !phone || !gender ) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        let obj = { name, email, phone, gender };
+
+        if (editIndex !== null) {  
+            records[editIndex] = obj;
+            editIndex = null;
+        } else {
+            records.push(obj);
+        }
+
+        localStorage.setItem("recordsData", JSON.stringify(records));
+
+        clearForm();
+        displayData();
+    }
+
+    function displayData() {
+        let table = "";
+        records.forEach((data, index) => {
+            table += `
+            <tr>
+                <td>${data.name}</td>
+                <td>${data.email}</td>
+                <td>${data.phone}</td>
+                <td>${data.gender}</td>
+               
+                <td>
+                    <button class="edit" onclick="editData(${index})">Edit</button>
+                    <button class="delete" onclick="deleteData(${index})">Delete</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById("recordTable").innerHTML = table;
+    }
+
+    function deleteData(index) {
+        records.splice(index, 1);
+        localStorage.setItem("recordsData", JSON.stringify(records));
+        displayData();
+    }
+
+    function editData(index) {
+        let data = records[index];
+        document.getElementById("name").value = data.name;
+        document.getElementById("email").value = data.email;
+        document.getElementById("phone").value = data.phone;
+        document.getElementById("gender").value = data.gender;
+        
+
+        editIndex = index;
+    }
+
+    function clearForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("gender").value = "";
+        document.getElementById("city").value = "";
+    }
+
+    displayData();
+</script>
+
+</body>
+</html>

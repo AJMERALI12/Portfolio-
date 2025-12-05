@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Messages</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef2f3;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    .top-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    input {
+        width: 200px;
+        padding: 10px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    button {
+        padding: 10px 15px;
+        background: #007bff;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    #clearAll {
+        background: #dc3545;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: white;
+    }
+
+    th, td {
+        border: 1px solid #aaa;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+
+    .action-btn {
+        background: orange;
+    }
+
+    .delete-btn {
+        background: red;
+    }
+</style>
+</head>
+<body>
+
+<h2>📩 Saved Contacts (Admin Panel)</h2>
+
+<div class="top-controls">
+    <input type="text" id="search" placeholder="Search by name..." onkeyup="searchData()">
+    <button id="clearAll" onclick="clearContacts()">Clear All</button>
+</div>
+
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Message</th>
+            <th>Time</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    let contacts = JSON.parse(localStorage.getItem("PortfolioContacts")) || [];
+
+    function renderTable() {
+        let tbody = document.querySelector("#dataTable tbody");
+        tbody.innerHTML = "";
+
+        contacts.forEach((data, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${data.name}</td>
+                    <td>${data.email}</td>
+                    <td>${data.mobile}</td>
+                    <td>${data.message}</td>
+                    <td>${data.time}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteData(${index})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function deleteData(index) {
+        if(confirm("Are you sure you want to delete?")) {
+            contacts.splice(index, 1);
+            localStorage.setItem("PortfolioContacts", JSON.stringify(contacts));
+            renderTable();
+        }
+    }
+
+    function clearContacts() {
+        if(confirm("⚠️ All data will be deleted permanently! Continue?")) {
+            localStorage.removeItem("PortfolioContacts");
+            contacts = [];
+            renderTable();
+        }
+    }
+
+    function searchData() {
+        let searchValue = document.getElementById("search").value.toLowerCase();
+        let rows = document.querySelectorAll("#dataTable tbody tr");
+
+        rows.forEach(row => {
+            let name = row.children[1].innerText.toLowerCase();
+            row.style.display = name.includes(searchValue) ? "" : "none";
+        });
+    }
+
+    renderTable();
+</script>
+
+</body>
+</html>

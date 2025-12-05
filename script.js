@@ -39,3 +39,63 @@ document.getElementById('year').textContent = new Date().getFullYear();
         }
       });
     });
+
+
+
+
+
+
+
+    const form = document.getElementById("contactForm");
+const formMsg = document.getElementById("formMsg");
+const clearBtn = document.getElementById("clearForm");
+
+// Load Data
+let contacts = JSON.parse(localStorage.getItem("PortfolioContacts")) || [];
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let mobile = document.getElementById("mobile").value.trim();
+    let message = document.getElementById("message").value.trim();
+
+    if (!name || !email || !mobile || !message) {
+        formMsg.innerText = "⚠️ Please fill all fields!";
+        formMsg.style.color = "red";
+        return;
+    }
+
+    if (mobile.length !== 10 || isNaN(mobile)) {
+        formMsg.innerText = "⚠️ Mobile number must be 10 digits!";
+        formMsg.style.color = "red";
+        return;
+    }
+
+    let newEntry = { name, email, mobile, message, time: new Date().toLocaleString() };
+
+    contacts.push(newEntry);
+
+    localStorage.setItem("PortfolioContacts", JSON.stringify(contacts));
+
+    formMsg.innerText = "✅ Message saved successfully!";
+    formMsg.style.color = "green";
+
+    form.reset();
+});
+
+// Clear Button
+clearBtn.addEventListener("click", () => {
+    form.reset();
+    formMsg.innerText = "";
+});
+
+console.log("Stored Contacts:", contacts);
+
+
+
+     
+
+
+   
